@@ -1,8 +1,12 @@
-const TOKEN = 'pk.eyJ1Ijoid29yYWNlIiwiYSI6ImNpeWMxOW1jcjAwYWUyd294ZzQ0YnMyZ3QifQ.ZaWekMcNTGFN-TmpPkf9AA';
+const TOKEN = config.mbKey;
 
 mapboxgl.accessToken = TOKEN
 
 console.log('running')
+
+function showStations() {
+  console.log("hooked up!")
+}
 
 function initMap() {
   console.log('init');
@@ -13,7 +17,7 @@ function initMap() {
     zoom: 13
   });
 
-  map.on('load', () => {
+  map.on('load', () => { //use promise.all for api calls, extract out to one function, see swapi-box
     $.getJSON('/neighborhoods')
       .then(data => {
         console.log(data);
@@ -32,6 +36,23 @@ function initMap() {
         });
 
       });
+    $.getJSON('/stations')
+    .then(data => {
+      console.log('stations data: ' + data);
+      map.addLayer({
+        'id': 'stations',
+        'type': 'point',
+        'source': {
+          'type': 'geojson',
+          'data': data
+        },
+        'layout': {},
+        'paint': {
+          'fill-color': 'red',
+          'fill-opacity': 1.0
+        }
+      });
+    })  
   })
 }
 
